@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.11.8",
+    "@graphql-codegen/cli": "^5.0.3",
+    "@parcel/watcher": "^2.4.1",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -24,6 +26,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "compile" : "graphql-codegen",
+    "watch" : "graphql-codegen -w",
     "tailwind:build": "npx tailwindcss-cli@latest build -i src/styles/tailwind.css -o src/styles/styles.css",
     "start": "npm run tailwind:build & react-scripts start",
     "build": "react-scripts build",
