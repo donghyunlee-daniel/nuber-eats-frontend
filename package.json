@@ -29,7 +29,7 @@
     "compile" : "graphql-codegen",
     "watch" : "graphql-codegen -w",
     "tailwind:build": "npx tailwindcss-cli@latest build -i src/styles/tailwind.css -o src/styles/styles.css",
-    "start": "npm run tailwind:build & react-scripts start",
+    "start": "npm compile & npm run tailwind:build & react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

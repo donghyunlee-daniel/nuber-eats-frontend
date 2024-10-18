@@ -14,7 +14,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 const documents = {
-    "\nmutation Login($email: String!, $password:String!) {\n  login(input: {\n  email:$email,\n  password:$password\n  })\n  {\n  ok,\n  token,\n  error,\n  }\n}": types.LoginDocument,
+    "\n  mutation Login($loginInput: LoginInput!) {\n    login(input: $loginInput) {\n      ok\n      token\n      error\n    }\n  }\n": types.LoginDocument,
 };
 
 /**
@@ -34,7 +34,7 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\nmutation Login($email: String!, $password:String!) {\n  login(input: {\n  email:$email,\n  password:$password\n  })\n  {\n  ok,\n  token,\n  error,\n  }\n}"): (typeof documents)["\nmutation Login($email: String!, $password:String!) {\n  login(input: {\n  email:$email,\n  password:$password\n  })\n  {\n  ok,\n  token,\n  error,\n  }\n}"];
+export function graphql(source: "\n  mutation Login($loginInput: LoginInput!) {\n    login(input: $loginInput) {\n      ok\n      token\n      error\n    }\n  }\n"): (typeof documents)["\n  mutation Login($loginInput: LoginInput!) {\n    login(input: $loginInput) {\n      ok\n      token\n      error\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};
