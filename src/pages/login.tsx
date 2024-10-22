@@ -1,8 +1,13 @@
 import React from "react";
+import Helmet from "react-helmet";
 import { useForm } from "react-hook-form";
 import { FormError } from "../components/form-error";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { LoginMutation, LoginMutationVariables } from "../gql/graphql";
+import nuberLogo from "../images/logo.svg";
+import { Button } from "../components/button";
+import { Link } from "react-router-dom";
+import { isLoggedInVar } from "../apollo";
 
 const LOGIN_MUTATION = gql`
   mutation Login($loginInput: LoginInput!) {
@@ -20,18 +25,15 @@ interface ILoginForm {
 }
 
 export const Login = () => {
-  const {
-    register,
-    getValues,
-    formState: { errors },
-    handleSubmit,
-  } = useForm<ILoginForm>();
+  const { register, getValues, formState, handleSubmit } =
+    useForm<ILoginForm>();
   const onCompleted = (data: LoginMutation) => {
     const {
       login: { error, ok, token },
     } = data;
     if (ok) {
       console.log(token);
+      isLoggedInVar(true);
     }
   };
   const [loginMutation, { data: loginMutationResult, loading }] = useMutation<
@@ -54,22 +56,35 @@ export const Login = () => {
     }
   };
   return (
-    <span className="h-screen flex items-center justify-center bg-gray-800">
-      <div className="bg-white w-full max-w-lg pt-10 pb-7 rounded-lg text-center">
-        <h3 className="text-2xl text-gray-800">Log In</h3>
+    <div className="h-screen flex items-center flex-col mt-10 lg:mt-28">
+      <Helmet>
+        <title>LogIn | Nuber Eats</title>
+      </Helmet>
+      <div className="w-full max-w-screen-sm flex flex-col px-5 items-center">
+        <img src={nuberLogo} className="w-52 mb-10" />
+        <h4 className="w-full font-semibold text-left text-3xl mb-5">
+          Welcome back
+        </h4>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="grid gap-3 mt-5 px-5"
+          className="grid gap-3 mt-5  w-full mb-5"
         >
           <input
-            {...register("email", { required: "Email is required" })}
+            {...register("email", {
+              required: "Email is required",
+              pattern:
+                /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+            })}
             name="email"
             type="email"
             placeholder="Email"
-            className="input mb-3"
+            className="input"
           />
-          {errors.email?.message && (
-            <FormError errorMessage={errors.email?.message} />
+          {formState.errors.email?.message && (
+            <FormError errorMessage={formState.errors.email?.message} />
+          )}
+          {formState.errors.email?.type === "pattern" && (
+            <FormError errorMessage={"Please enter a valid email"} />
           )}
           <input
             {...register("password", {
@@ -80,18 +95,26 @@ export const Login = () => {
             placeholder="password"
             className="input"
           />
-          {errors.password?.message && (
-            <FormError errorMessage={errors.password.message} />
+          {formState.errors.password?.message && (
+            <FormError errorMessage={formState.errors.password.message} />
           )}
 
-          <button className="mt-3 btn">
-            {loading ? "Loading..." : "Log In"}
-          </button>
+          <Button
+            canClick={formState.isValid}
+            loading={loading}
+            actionText={"Log In"}
+          />
           {loginMutationResult?.login.error && (
             <FormError errorMessage={loginMutationResult.login.error} />
           )}
         </form>
+        <div>
+          New to Nuber?{" "}
+          <Link to="/create-account" className="text-lime-600 hover:underline">
+            Create an Account
+          </Link>
+        </div>
       </div>
-    </span>
+    </div>
   );
 };
