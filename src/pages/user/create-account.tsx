@@ -1,16 +1,16 @@
 import React from "react";
 import {Helmet} from "react-helmet-async";
 import { useForm } from "react-hook-form";
-import { FormError } from "../components/form-error";
+import { FormError } from "../../components/form-error";
 import { ApolloError, gql, useMutation } from "@apollo/client";
-import nuberLogo from "../images/logo.svg";
-import { Button } from "../components/button";
+import nuberLogo from "../../images/logo.svg";
+import { Button } from "../../components/button";
 import { Link, useHistory } from "react-router-dom";
 import {
   CreateAccountMutation,
   CreateAccountMutationVariables,
   UserRole,
-} from "../gql/graphql";
+} from "../../gql/graphql";
 
 const CREATE_ACCOUNT_MUTATION = gql`
   mutation CreateAccount($createAccountInput: CreateAccountInput!) {
