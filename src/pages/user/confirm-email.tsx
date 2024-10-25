@@ -39,7 +39,7 @@ export const ConfirmEmail = () => {
       history.push("/");
     }
   };
-  const [verifyEmail] = useMutation<
+  const [verifyEmailMutation] = useMutation<
     VerifyEmailMutation,
     VerifyEmailMutationVariables
   >(VERIFY_EMAIL_MUTATION, {
@@ -47,13 +47,13 @@ export const ConfirmEmail = () => {
   });
   useEffect(() => {
     const [_, code] = window.location.href.split("code=");
-    // verifyEmail({
-    //     variables:{
-    //         input:{
-    //             code,
-    //         }
-    //     }
-    // })
+    verifyEmailMutation({
+        variables:{
+            input:{
+                code,
+            }
+        }
+    })
   }, []);
   return (
     <div className="mt-52 flex flex-col items-center justify-center">

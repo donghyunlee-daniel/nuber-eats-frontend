@@ -2,7 +2,7 @@ import React from "react";
 import { useMe } from "../../hooks/useMe";
 import { Button } from "../../components/button";
 import { useForm } from "react-hook-form";
-import { gql, useMutation } from "@apollo/client";
+import { gql, useApolloClient, useMutation } from "@apollo/client";
 import {
   EditProfileMutation,
   EditProfileMutationVariables,
@@ -24,15 +24,33 @@ interface IFormProps {
 
 export const EditProfile = () => {
   const { data: userData } = useMe();
+  const client = useApolloClient();
   const onCompleted = (data: EditProfileMutation) => {
     const {
       editProfile: { ok },
     } = data;
-    if (ok) {
-      // update the cache
+    if (ok && userData) {
+      const {
+        me: { email: prevEmail, id },
+      } = userData;
+      const { email: newEmail } = getValues();
+      if (prevEmail !== newEmail) {
+        client.writeFragment({
+          id: `User:${id}`,
+          fragment: gql`
+          fragment EditedUser on User {
+            verified
+            email
+          }`,
+          data: {
+            email: newEmail,
+            verified: false,
+          },
+        });
+      }
     }
   };
-  const [editProfile, { loading }] = useMutation<
+  const [editProfileMutation, { loading }] = useMutation<
     EditProfileMutation,
     EditProfileMutationVariables
   >(EDIT_PROFILE_MUTATION, {
@@ -44,15 +62,15 @@ export const EditProfile = () => {
     },
   });
   const onSubmit = () => {
-    const {email, password} = getValues();
-    editProfile({
-        variables:{
-            input: {
-                email,
-                ...(password !== "" && {password})
-            }
-        }
-    })
+    const { email, password } = getValues();
+    editProfileMutation({
+      variables: {
+        input: {
+          email,
+          ...(password !== "" && { password }),
+        },
+      },
+    });
   };
   return (
     <div className="mt-52 flex flex-col justify-center items-center">
