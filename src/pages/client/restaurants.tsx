@@ -60,10 +60,23 @@ export const Restaurants = () => {
         />
       </form>
       {!loading && (
-        <div className="max-w-screen-2xl mx-auto mt-8">
+        <div className="max-w-screen-xl mx-auto mt-8">
           <div className="flex justify-around max-w-sm mx-auto">
-            {data?.allCategories.categories?.map((category) => (
-              <Category categoryName={category.name} coverImg={category.coverImg}/>
+            {data?.allCategories.categories?.map((category, index) => (
+              <Category
+                categoryName={category.name}
+                coverImg={category.coverImg}
+                key={index}
+              />
+            ))}
+          </div>
+          <div className="grid mt-10 grid-cols-3 gap-x-5 gap-y-10">
+            {data?.restaurants.results?.map((restaurant) => (
+              <div>
+                <div className="py-28 bg-cover bg-center mb-3" style={{backgroundImage: `url(${restaurant.coverImg})`}}></div>
+                <h3 className="text-xl font-medium">{restaurant.name}</h3>
+                <span className="border-t-2 border-gray-200">{restaurant.category?.name}</span>
+              </div>
             ))}
           </div>
         </div>
