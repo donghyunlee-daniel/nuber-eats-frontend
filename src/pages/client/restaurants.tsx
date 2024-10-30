@@ -6,6 +6,9 @@ import {
 } from "../../gql/graphql";
 import { Category } from "../../components/category";
 import { Restaurant } from "../../components/restaurant";
+import { useForm } from "react-hook-form";
+import { useHistory } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 const RESTARUANTS_QUERY = gql`
   query restaurantsPage($input: RestaurantsInput!) {
@@ -39,6 +42,10 @@ const RESTARUANTS_QUERY = gql`
   }
 `;
 
+interface IFormProps {
+  searchTerm: string;
+}
+
 export const Restaurants = () => {
   const [page, setpage] = useState(1);
   const { data, loading } = useQuery<
@@ -53,29 +60,46 @@ export const Restaurants = () => {
   });
   const onNextPageClick = () => setpage((current) => current + 1);
   const onPrevPageClick = () => setpage((current) => current - 1);
+  const { register, handleSubmit, getValues } = useForm<IFormProps>();
+  const history = useHistory();
+  const onSearchSubmit = () => {
+    const { searchTerm } = getValues();
+    history.push({
+      pathname: "/search",
+      search: `?term=${searchTerm}`
+    });
+  };
   return (
     <div>
-      <form className="bg-gray-800 w-full py-40 flex items-center justify-center">
+      <Helmet>
+        <title>Home | Nuber Eats</title>
+      </Helmet>
+      <form
+        onSubmit={handleSubmit(onSearchSubmit)}
+        className="bg-gray-800 w-full py-40 flex items-center justify-center"
+      >
         <input
+          {...register("searchTerm", { required: true, min: 3 })}
           type="Search"
-          className="input w-3/12 rounded-md border-0"
+          className="input w-3/4 md:w-3/12 rounded-md border-0"
           placeholder="Search Restaurants..."
         />
       </form>
       {!loading && (
         <div className="max-w-screen-xl pb-20 mx-auto mt-8">
           <div className="flex justify-around max-w-sm mx-auto">
-            {data?.allCategories.categories?.map((category, index) => (
+            {data?.allCategories.categories?.map((category) => (
               <Category
                 categoryName={category.name}
                 coverImg={category.coverImg}
-                key={index}
+                key={category.id}
               />
             ))}
           </div>
-          <div className="grid mt-16 grid-cols-3 gap-x-5 gap-y-10">
-            {data?.restaurants.results?.map((restaurant, index) => (
+          <div className="grid mt-16 md:grid-cols-3 gap-x-5 gap-y-10">
+            {data?.restaurants.results?.map((restaurant) => (
               <Restaurant
+                key={restaurant.id}
                 id={restaurant.id + ""}
                 coverImg={restaurant.coverImg}
                 name={restaurant.name}
@@ -94,7 +118,7 @@ export const Restaurants = () => {
             ) : (
               <div></div>
             )}
-            <span >
+            <span>
               page {page} of {data?.restaurants.totalPages}
             </span>
             {page !== data?.restaurants.totalPages ? (
@@ -104,7 +128,9 @@ export const Restaurants = () => {
               >
                 &rarr;
               </button>
-            ) :<div></div>}
+            ) : (
+              <div></div>
+            )}
           </div>
         </div>
       )}
