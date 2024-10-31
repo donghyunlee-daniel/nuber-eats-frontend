@@ -4,8 +4,8 @@ import {
   RestaurantsPageQuery,
   RestaurantsPageQueryVariables,
 } from "../../gql/graphql";
-import { Category } from "../../components/category";
-import { Restaurant } from "../../components/restaurant";
+import { CategoryComp } from "../../components/category";
+import { RestaurantComp } from "../../components/restaurant";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
@@ -61,7 +61,6 @@ export const Restaurants = () => {
       search: `?term=${searchTerm}`
     });
   };
-  console.log(data);
   return (
     <div>
       <Helmet>
@@ -82,7 +81,7 @@ export const Restaurants = () => {
         <div className="max-w-screen-xl pb-20 mx-auto mt-8">
           <div className="flex justify-around max-w-sm mx-auto">
             {data?.allCategories.categories?.map((category) => (
-              <Category
+              <CategoryComp
                 categoryName={category.name}
                 coverImg={category.coverImg}
                 slug={category.slug}
@@ -92,7 +91,7 @@ export const Restaurants = () => {
           </div>
           <div className="grid mt-16 md:grid-cols-3 gap-x-5 gap-y-10">
             {data?.restaurants.results?.map((restaurant) => (
-              <Restaurant
+              <RestaurantComp
                 key={restaurant.id}
                 id={restaurant.id + ""}
                 coverImg={restaurant.coverImg}

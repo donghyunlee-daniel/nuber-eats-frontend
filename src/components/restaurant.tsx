@@ -7,7 +7,7 @@ interface IRestaurantProps {
     categoryName?:string;
 }
 
-export const Restaurant: React.FC<IRestaurantProps> = ({coverImg,name,categoryName}) => (
+export const RestaurantComp: React.FC<IRestaurantProps> = ({coverImg,name,categoryName}) => (
   <div className="flex flex-col">
     <div
       className="py-28 bg-cover bg-center mb-3"

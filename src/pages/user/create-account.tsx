@@ -1,5 +1,5 @@
 import React from "react";
-import {Helmet} from "react-helmet-async";
+import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { FormError } from "../../components/form-error";
 import { ApolloError, gql, useMutation } from "@apollo/client";
@@ -34,13 +34,13 @@ export const CreateAccount = () => {
         role: UserRole.Client,
       },
     });
-    const history = useHistory()
+  const history = useHistory();
   const onCompleted = (data: CreateAccountMutation) => {
     const {
       createAccount: { ok, error },
     } = data;
     if (ok) {
-      alert("Account Created! Log in now!")
+      alert("Account Created! Log in now!");
       history.push("/");
     }
   };

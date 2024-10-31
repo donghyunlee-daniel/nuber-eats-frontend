@@ -7,7 +7,7 @@ interface ICategoryProps {
   slug: string;
 }
 
-export const Category: React.FC<ICategoryProps> = ({
+export const CategoryComp: React.FC<ICategoryProps> = ({
   categoryName,
   coverImg,
   slug,
