@@ -6,7 +6,10 @@ const config: CodegenConfig = {
     ignoreNoDocuments: true,
     generates: {
         './src/gql/' : {
-            preset: 'client'
+            preset: 'client',
+            presetConfig:{
+                fragmentMasking: false
+            }
         }
     }
 }

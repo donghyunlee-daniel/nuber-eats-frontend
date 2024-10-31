@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useFragment, useQuery } from "@apollo/client";
 import React, { useState } from "react";
 import {
   RestaurantsPageQuery,
@@ -9,6 +9,7 @@ import { Restaurant } from "../../components/restaurant";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import { CATEGORY_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
 
 const RESTARUANTS_QUERY = gql`
   query restaurantsPage($input: RestaurantsInput!) {
@@ -16,11 +17,7 @@ const RESTARUANTS_QUERY = gql`
       ok
       error
       categories {
-        id
-        name
-        coverImg
-        slug
-        restaurantCount
+        ...CategoryParts
       }
     }
     restaurants(input: $input) {
@@ -29,17 +26,12 @@ const RESTARUANTS_QUERY = gql`
       totalPages
       totalResults
       results {
-        id
-        name
-        coverImg
-        category {
-          name
-        }
-        address
-        isPromoted
+        ...RestaurantParts
       }
     }
   }
+  ${RESTAURANT_FRAGMENT}
+  ${CATEGORY_FRAGMENT}
 `;
 
 interface IFormProps {
@@ -49,8 +41,8 @@ interface IFormProps {
 export const Restaurants = () => {
   const [page, setpage] = useState(1);
   const { data, loading } = useQuery<
-    RestaurantsPageQuery,
-    RestaurantsPageQueryVariables
+  RestaurantsPageQuery,
+  RestaurantsPageQueryVariables
   >(RESTARUANTS_QUERY, {
     variables: {
       input: {
@@ -69,6 +61,7 @@ export const Restaurants = () => {
       search: `?term=${searchTerm}`
     });
   };
+  console.log(data);
   return (
     <div>
       <Helmet>
@@ -92,6 +85,7 @@ export const Restaurants = () => {
               <Category
                 categoryName={category.name}
                 coverImg={category.coverImg}
+                slug={category.slug}
                 key={category.id}
               />
             ))}
