@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 interface IRestaurantProps {
     id:string;
@@ -7,7 +8,8 @@ interface IRestaurantProps {
     categoryName?:string;
 }
 
-export const RestaurantComp: React.FC<IRestaurantProps> = ({coverImg,name,categoryName}) => (
+export const RestaurantComp: React.FC<IRestaurantProps> = ({id,coverImg,name,categoryName}) => (
+  <Link to={`/restaurants/${id}`}>
   <div className="flex flex-col">
     <div
       className="py-28 bg-cover bg-center mb-3"
@@ -18,4 +20,5 @@ export const RestaurantComp: React.FC<IRestaurantProps> = ({coverImg,name,catego
       {categoryName}
     </span>
   </div>
+  </Link>
 );
