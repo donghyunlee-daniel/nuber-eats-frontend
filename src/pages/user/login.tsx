@@ -1,5 +1,5 @@
 import React from "react";
-import {Helmet} from "react-helmet-async";
+import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { FormError } from "../../components/form-error";
 import { ApolloError, gql, useMutation } from "@apollo/client";
@@ -10,8 +10,7 @@ import { Link } from "react-router-dom";
 import { authTokenVar, isLoggedInVar } from "../../apollo";
 import { LOCALSTORAGE_TOKEN } from "../../constants";
 
-
-const LOGIN_MUTATION = gql`
+export const LOGIN_MUTATION = gql`
   mutation Login($loginInput: LoginInput!) {
     login(input: $loginInput) {
       ok
@@ -27,11 +26,11 @@ interface ILoginForm {
 }
 
 export const Login = () => {
-  const { register, getValues, formState, handleSubmit } =
-    useForm<ILoginForm>();
+  const { register, getValues, formState:{errors, isValid}, handleSubmit } =
+    useForm<ILoginForm>({mode:"onChange"});
   const onCompleted = (data: LoginMutation) => {
     const {
-      login: { error, ok, token },
+      login: { ok, token },
     } = data;
     if (ok && token) {
       localStorage.setItem(LOCALSTORAGE_TOKEN, token);
@@ -61,7 +60,7 @@ export const Login = () => {
   return (
     <div className="h-screen flex items-center flex-col mt-10 lg:mt-28">
       <Helmet>
-        <title>LogIn | Nuber Eats</title>
+        <title>Login | Nuber Eats</title>
       </Helmet>
       <div className="w-full max-w-screen-sm flex flex-col px-5 items-center">
         <img src={nuberLogo} className="w-52 mb-10" />
@@ -84,10 +83,10 @@ export const Login = () => {
             placeholder="Email"
             className="input"
           />
-          {formState.errors.email?.message && (
-            <FormError errorMessage={formState.errors.email?.message} />
+          {errors.email?.message && (
+            <FormError errorMessage={errors.email?.message} />
           )}
-          {formState.errors.email?.type === "pattern" && (
+          {errors.email?.type === "pattern" && (
             <FormError errorMessage={"Please enter a valid email"} />
           )}
           <input
@@ -99,12 +98,12 @@ export const Login = () => {
             placeholder="password"
             className="input"
           />
-          {formState.errors.password?.message && (
-            <FormError errorMessage={formState.errors.password.message} />
+          {errors.password?.message && (
+            <FormError errorMessage={errors.password.message} />
           )}
 
           <Button
-            canClick={formState.isValid}
+            canClick={isValid}
             loading={loading}
             actionText={"Log In"}
           />
