@@ -75,7 +75,7 @@ describe("<CreateAccount />", () => {
       data: {
         createAccount: {
           ok: true,
-          error: "mutation-error",
+          error: null,
         },
       },
     });
@@ -98,9 +98,7 @@ describe("<CreateAccount />", () => {
       },
     });
     expect(window.alert).toHaveBeenCalledWith("Account Created! Log in now!");
-    const mutationError = getByRole("alert");
     expect(mockPush).toHaveBeenCalledWith("/");
-    expect(mutationError).toHaveTextContent("mutation-error");
   });
   it("should displays mutation error", async () => {
     const { getByRole, getByPlaceholderText } = renderResult;
