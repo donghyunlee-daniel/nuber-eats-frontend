@@ -1,11 +1,9 @@
-import { RenderResult, render, waitFor } from "@testing-library/react";
-import React, { act } from "react";
+import React from "react";
 import { LOGIN_MUTATION, Login } from "../user/login";
 import { ApolloProvider } from "@apollo/client";
 import { MockApolloClient, createMockClient } from "mock-apollo-client";
-import { HelmetProvider } from "react-helmet-async";
-import { BrowserRouter as Router } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
+import { RenderResult, act, render, waitFor } from "../../test-utils";
 
 describe("<Login />", () => {
   let renderResult: RenderResult;
@@ -14,13 +12,9 @@ describe("<Login />", () => {
     await waitFor(async () => {
       mockedClient = createMockClient();
       renderResult = render(
-        <HelmetProvider>
-          <Router>
-            <ApolloProvider client={mockedClient}>
-              <Login />
-            </ApolloProvider>
-          </Router>
-        </HelmetProvider>
+        <ApolloProvider client={mockedClient}>
+          <Login />
+        </ApolloProvider>
       );
     });
   });
@@ -33,13 +27,13 @@ describe("<Login />", () => {
     const { getByPlaceholderText, debug, getByRole } = renderResult;
     const email = getByPlaceholderText(/email/i);
     await act(async () => {
-      await userEvent.type(email, "this@wont");
+      userEvent.type(email, "this@wont");
     });
 
     let errorMessage = getByRole("alert");
     expect(errorMessage).toHaveTextContent(/Please enter a valid email/i);
     await act(async () => {
-      await userEvent.clear(email);
+      userEvent.clear(email);
     });
     errorMessage = getByRole("alert");
     expect(errorMessage).toHaveTextContent(/Email is required/i);
@@ -49,8 +43,8 @@ describe("<Login />", () => {
     const email = getByPlaceholderText(/email/i);
     const submitBtn = getByRole("button");
     await act(async () => {
-      await userEvent.type(email, "this@wont.com");
-      await userEvent.click(submitBtn);
+      userEvent.type(email, "this@wont.com");
+      userEvent.click(submitBtn);
     });
     const errorMessage = getByRole("alert");
     expect(errorMessage).toHaveTextContent(/password is required/i);
@@ -76,9 +70,9 @@ describe("<Login />", () => {
     mockedClient.setRequestHandler(LOGIN_MUTATION, mockedMutationResponse);
     jest.spyOn(Storage.prototype, "setItem");
     await act(async () => {
-      await userEvent.type(email, formData.email);
-      await userEvent.type(password, formData.password);
-      await userEvent.click(submitBtn);
+      userEvent.type(email, formData.email);
+      userEvent.type(password, formData.password);
+      userEvent.click(submitBtn);
     });
     expect(mockedMutationResponse).toHaveBeenCalledTimes(1);
     expect(mockedMutationResponse).toHaveBeenCalledWith({
@@ -87,7 +81,7 @@ describe("<Login />", () => {
         password: formData.password,
       },
     });
-    expect(localStorage.setItem).toHaveBeenCalledWith("nuber-token", "XXX")
+    expect(localStorage.setItem).toHaveBeenCalledWith("nuber-token", "XXX");
   });
   it("displays mutation error", async () => {
     const { getByPlaceholderText, debug, getByRole } = renderResult;
@@ -109,19 +103,18 @@ describe("<Login />", () => {
     });
     mockedClient.setRequestHandler(LOGIN_MUTATION, mockedMutationResponse);
     await act(async () => {
-      await userEvent.type(email, formData.email);
-      await userEvent.type(password, formData.password);
-      await userEvent.click(submitBtn);
+      userEvent.type(email, formData.email);
+      userEvent.type(password, formData.password);
+      userEvent.click(submitBtn);
     });
     expect(mockedMutationResponse).toHaveBeenCalledTimes(1);
     expect(mockedMutationResponse).toHaveBeenCalledWith({
-      loginInput:{
+      loginInput: {
         email: formData.email,
-        password: formData.password
-      }
-    })
-    const errorMessage = getByRole("alert")
-    expect(errorMessage).toHaveTextContent(/Mutation-Error/i)
-    
+        password: formData.password,
+      },
+    });
+    const errorMessage = getByRole("alert");
+    expect(errorMessage).toHaveTextContent(/Mutation-Error/i);
   });
 });
