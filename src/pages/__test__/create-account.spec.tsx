@@ -6,6 +6,21 @@ import { RenderResult, act, render, waitFor } from "../../test-utils";
 import userEvent from "@testing-library/user-event";
 import { UserRole } from "../../gql/graphql";
 
+
+const mockPush = jest.fn()
+
+jest.mock("react-router-dom", () => {
+  const realmodule = jest.requireActual("react-router-dom");
+  return {
+    ...realmodule,
+    useHistory: () => {
+      return {
+        push: mockPush,
+      };
+    },
+  };
+});
+
 describe("<CreateAccount />", () => {
   let mockedClient: MockApolloClient;
   let renderResult: RenderResult;
@@ -68,7 +83,7 @@ describe("<CreateAccount />", () => {
       CREATE_ACCOUNT_MUTATION,
       mockedCreateAccountMutationResponse
     );
-    jest.spyOn(window, "alert").mockImplementation(()=> null);
+    jest.spyOn(window, "alert").mockImplementation(() => null);
     await act(async () => {
       userEvent.type(email, formData.email);
       userEvent.type(password, formData.password);
@@ -82,11 +97,12 @@ describe("<CreateAccount />", () => {
         role: formData.role,
       },
     });
-    expect(window.alert).toHaveBeenCalledWith("Account Created! Log in now!")
+    expect(window.alert).toHaveBeenCalledWith("Account Created! Log in now!");
     const mutationError = getByRole("alert");
-    expect(mutationError).toHaveTextContent("mutation-error")
+    expect(mockPush).toHaveBeenCalledWith("/");
+    expect(mutationError).toHaveTextContent("mutation-error");
   });
-  it('should displays mutation error', async () => {
+  it("should displays mutation error", async () => {
     const { getByRole, getByPlaceholderText } = renderResult;
     const email = getByPlaceholderText(/email/i);
     const password = getByPlaceholderText(/password/i);
@@ -122,6 +138,10 @@ describe("<CreateAccount />", () => {
       },
     });
     const mutationError = getByRole("alert");
-    expect(mutationError).toHaveTextContent("mutation-error")
-  })
+    expect(mutationError).toHaveTextContent("mutation-error");
+  });
+
+  afterAll(() => {
+    jest.clearAllMocks();
+  });
 });
