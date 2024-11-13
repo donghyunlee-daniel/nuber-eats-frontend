@@ -16,6 +16,7 @@
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.20",
+    "cypress": "^13.15.2",
     "graphql": "^16.9.0",
     "mock-apollo-client": "^1.3.1",
     "postcss": "^8.4.47",
@@ -60,6 +61,7 @@
   },
   "devDependencies": {
     "@graphql-codegen/near-operation-file-preset": "^3.0.0",
+    "@testing-library/cypress": "^10.0.2",
     "@testing-library/react": "^16.0.1",
     "@types/react-helmet": "^6.1.11",
     "@types/react-router-dom": "^5.3.3"
