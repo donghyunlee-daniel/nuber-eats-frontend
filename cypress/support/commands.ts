@@ -41,8 +41,9 @@ declare global{
     namespace Cypress {
         interface Chainable {
             assertLoggedIn() : Chainable<void>;
-            login(email, password) : Chainable<void>;
+            login() : Chainable<void>;
             assertLoggedOut() : Chainable<void>;
+            assertTitle(title): Chainable<void>;
         }
     }
 }
@@ -55,12 +56,16 @@ Cypress.Commands.add('assertLoggedOut', () => {
     cy.window().its("localStorage.nuber-token").should("be.undefined");
 })
 
-Cypress.Commands.add("login" , (email, password) => {
+Cypress.Commands.add("login" , () => {
     cy.assertLoggedOut();
     cy.visit("/")
-    cy.title().should("eq", "Login | Nuber Eats");
-    cy.findByPlaceholderText(/email/i).type(email); 
-    cy.findAllByPlaceholderText(/password/i).type(password);
+    cy.assertTitle("Login")
+    cy.findByPlaceholderText(/email/i).type("theReal@mail.com"); 
+    cy.findAllByPlaceholderText(/password/i).type("theReal@mail.com");
     cy.findByRole("button").should("not.have.class", "pointer-events-none").click();
     cy.assertLoggedIn();
+})
+
+Cypress.Commands.add("assertTitle", (title) => {
+    cy.title().should("eq", `${title} | Nuber Eats`);
 })

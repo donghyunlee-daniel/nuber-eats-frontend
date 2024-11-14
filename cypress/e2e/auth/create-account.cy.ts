@@ -20,13 +20,7 @@ describe("Create Account", () => {
       if (operationName && operationName === "CreateAccount") {
         req.reply((res) => {
           res.send({
-            data: {
-              createAccount: {
-                ok: true,
-                error: null,
-                __typename: "CreateAccountOutput",
-              },
-            },
+            fixture:"create-account.json"
           });
         });
       }
@@ -38,6 +32,6 @@ describe("Create Account", () => {
     // wait a little
     user.wait(1000);
     // log in part
-    user.login("theReal@mail.com", "theReal@mail.com")
+    user.login()
   });
 });

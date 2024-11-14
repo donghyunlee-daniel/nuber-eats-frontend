@@ -13,7 +13,7 @@ describe("Log In", () => {
     cy.findByRole("alert").should("have.text", "Password is required");
   });
   it("can fill out the form and log in", () => {
-    cy.login("test@test.com", "121212")
+    cy.login()
   });
   
 });
