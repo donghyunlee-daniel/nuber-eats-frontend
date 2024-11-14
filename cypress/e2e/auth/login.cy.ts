@@ -12,14 +12,8 @@ describe("Log In", () => {
     cy.findByPlaceholderText(/password/i).type("a").clear();
     cy.findByRole("alert").should("have.text", "Password is required");
   });
-  it("can fill out the form", () => {
-    cy.visit("/");
-    cy.findByPlaceholderText(/email/i).type("test@test.com"); 
-    cy.findAllByPlaceholderText(/password/i).type("121212");
-    cy.findByRole("button").should("not.have.class", "pointer-events-none").click();
-    cy.window().its("localStorage.nuber-token").should("be.a","string");
+  it("can fill out the form and log in", () => {
+    cy.login("test@test.com", "121212")
   });
-  it('sign up', () => {
-    cy.visit('/create-account')
-  })
+  
 });
