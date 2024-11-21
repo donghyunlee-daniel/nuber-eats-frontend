@@ -1,4 +1,4 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql, useApolloClient, useMutation } from "@apollo/client";
 import React, { useState } from "react";
 import {
   CreateRestaurantMutation,
@@ -8,12 +8,15 @@ import { useForm } from "react-hook-form";
 import { Button } from "../../components/button";
 import { Helmet } from "react-helmet-async";
 import { FormError } from "../../components/form-error";
+import { MY_RESTAURANTS } from "./my-restaurants";
+import { useHistory } from "react-router-dom";
 
 const CREATE_RESTAURANT = gql`
   mutation createRestaurant($input: CreateRestaurantInput!) {
     createRestaurant(input: $input) {
       ok
       error
+      restaurantId
     }
   }
 `;
@@ -26,12 +29,40 @@ interface IFormProps {
 }
 
 export const AddRestaurant = () => {
+  const client = useApolloClient();
+  const history = useHistory();
+  const [imageUrl, setImageUrl] = useState("");
   const onCompleted = (data: CreateRestaurantMutation) => {
     const {
-      createRestaurant: { ok, error },
+      createRestaurant: { ok, restaurantId },
     } = data;
     if (ok) {
+      const { name, categoryName, address } = getValues();
       setUploading(false);
+      const queryResult = client.readQuery({ query: MY_RESTAURANTS });
+      client.writeQuery({
+        query: MY_RESTAURANTS,
+        data: {
+          myRestaurants: {
+            ...queryResult.myRestaurants,
+            restaurants: [
+              {
+                address,
+                category: {
+                  name: categoryName,
+                  __typename: "Category",
+                },
+                coverImg: imageUrl,
+                id: restaurantId,
+                isPromoted: false,
+                name: name,
+                __typename: "Restaurant",
+              },
+            ],
+          },
+        },
+      });
+      history.push("/")
     }
   };
   const [createRestaurantMutation, { data }] = useMutation<
@@ -49,19 +80,20 @@ export const AddRestaurant = () => {
       const actualFile = file[0];
       const formBody = new FormData();
       formBody.append("file", actualFile);
-      const { url } = await (
+      const { url: coverImg } = await (
         await fetch("http://localhost:4000/uploads/", {
           method: "POST",
           body: formBody,
         })
       ).json();
+      setImageUrl(coverImg);
       createRestaurantMutation({
         variables: {
           input: {
             name,
             categoryName,
             address,
-            coverImg: url,
+            coverImg,
           },
         },
       });
