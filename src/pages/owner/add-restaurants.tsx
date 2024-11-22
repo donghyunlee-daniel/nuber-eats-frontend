@@ -102,7 +102,7 @@ export const AddRestaurant = () => {
     }
   };
   return (
-    <div className="container flex-col items-center mt-20">
+    <div className="container flex flex-col items-center mt-20">
       <Helmet>
         <title>Add Restaurant | Nuber Eats</title>
       </Helmet>
