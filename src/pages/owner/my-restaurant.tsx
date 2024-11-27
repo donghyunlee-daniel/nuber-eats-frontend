@@ -6,6 +6,7 @@ import {
   MyRestaurantQuery,
   MyRestaurantQueryVariables,
 } from "../../gql/graphql";
+import { Dish } from "../../components/dish";
 
 export const MY_RESTAURANT = gql`
   query myRestaurant($input: MyRestaurantInput!) {
@@ -53,15 +54,23 @@ export const MyRestaurant = () => {
         <h2 className="text-4xl font-medium mb-10">
           {data?.myRestaurant.restaurant?.name || "Loading..."}
         </h2>
-        <Link to={`/restaurants/${id}/add-dish`} className="mr-8 text-white bg-gray-800 py-3 px-10">
+        <Link
+          to={`/restaurants/${id}/add-dish`}
+          className="mr-8 text-white bg-gray-800 py-3 px-10"
+        >
           Add Dish &rarr;
         </Link>
         <Link to={``} className="text-white bg-lime-700 py-3 px-10">
           Buy Promotion &rarr;
         </Link>
-      <div className="mt-10">
-        {data?.myRestaurant.restaurant?.menu.length === 0 ? <h4 className="text-xl mb-5">Please upload a dish!</h4> : null}
-      </div>
+        <div className="mt-10">
+          {data?.myRestaurant.restaurant?.menu.length === 0 ? (
+            <h4 className="text-xl mb-5">Please upload a dish!</h4>
+          ) :<div className="grid mt-16 md:grid-cols-3 gap-x-5 gap-y-10">
+            {data?.myRestaurant.restaurant?.menu.map(dish => <Dish name={dish.name} descriptions={dish.description} price={dish.price}/>)}
+          </div>
+        }
+        </div>
       </div>
     </div>
   );
