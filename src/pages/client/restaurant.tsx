@@ -1,8 +1,10 @@
 import { gql, useQuery } from "@apollo/client";
 import React from "react";
 import { useParams } from "react-router-dom";
-import { RESTAURANT_FRAGMENT } from "../../fragments";
+import { DISH_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
 import { RestaurantQuery, RestaurantQueryVariables } from "../../gql/graphql";
+import { Dish } from "../../components/dish";
+import { Helmet } from "react-helmet-async";
 
 const RESTAURANT_QUERY = gql`
   query restaurant($input: RestaurantInput!) {
@@ -11,10 +13,14 @@ const RESTAURANT_QUERY = gql`
       error
       restaurant {
         ...RestaurantParts
+        menu {
+          ...DishParts
+        }
       }
     }
   }
   ${RESTAURANT_FRAGMENT}
+  ${DISH_FRAGMENT}
 `;
 
 interface IRestaurantParams {
@@ -33,10 +39,12 @@ export const Restaurant = () => {
       },
     }
   );
+  console.log(data);
   return (
     <div>
+      <Helmet><title>{data?.restaurant.restaurant?.name || ""}</title></Helmet>
       <div
-        className="bg-gray-800 py-48 bg-center bg-cover"
+        className="bg-gray-800 py-40 bg-center bg-cover"
         style={{
           backgroundImage: `url(${data?.restaurant.restaurant?.coverImg})`,
         }}
@@ -50,6 +58,18 @@ export const Restaurant = () => {
             {data?.restaurant.restaurant?.address}
           </h6>
         </div>
+      </div>
+      <div className="container grid mt-16 md:grid-cols-3 gap-x-5 gap-y-10">
+        {data?.restaurant.restaurant?.menu.map((dish, index) => (
+          <Dish
+            name={dish.name}
+            descriptions={dish.description}
+            price={dish.price}
+            isCustomer={true}
+            options={dish.options}
+            key={index}
+          />
+        ))}
       </div>
     </div>
   );

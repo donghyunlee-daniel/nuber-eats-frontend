@@ -7,7 +7,6 @@
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
-    "@graphql-codegen/cli": "^5.0.3",
     "@parcel/watcher": "^2.4.1",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/user-event": "^12.2.2",
@@ -61,11 +60,16 @@
     ]
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.3",
+    "@graphql-codegen/client-preset": "^4.5.1",
     "@graphql-codegen/near-operation-file-preset": "^3.0.0",
+    "@graphql-codegen/typescript": "^4.1.2",
+    "@graphql-codegen/typescript-operations": "^4.4.0",
     "@testing-library/cypress": "^10.0.2",
     "@testing-library/react": "^16.0.1",
     "@types/react-helmet": "^6.1.11",
-    "@types/react-router-dom": "^5.3.3"
+    "@types/react-router-dom": "^5.3.3",
+    "ts-node": "^10.9.2"
   },
   "jest": {
     "collectCoverageFrom": [
