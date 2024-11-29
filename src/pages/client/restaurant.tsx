@@ -1,9 +1,11 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { DISH_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
 import {
   CreateOrderItemInput,
+  CreateOrderMutation,
+  CreateOrderMutationVariables,
   RestaurantQuery,
   RestaurantQueryVariables,
 } from "../../gql/graphql";
@@ -33,6 +35,7 @@ const CREATE_ORDER = gql`
     createOrder(input: $input) {
       ok
       error
+      orderId
     }
   }
 `;
@@ -87,7 +90,7 @@ export const Restaurant = () => {
       if (!hasOption) {
         removeFromOrder(dishId);
         setOrderItems((current) => [
-          { dishId, options: [{name: optionName}, ...oldItem.options!] },
+          { dishId, options: [{ name: optionName }, ...oldItem.options!] },
           ...current,
         ]);
       }
@@ -126,7 +129,40 @@ export const Restaurant = () => {
     return false;
   };
 
-  console.log(orderItems);
+  const triggerCancelOrder = () => {
+    setOrderStarted(false);
+    setOrderItems([]);
+  };
+  const history = useHistory();
+  const onCompleted = (data:CreateOrderMutation) => {
+    if(data.createOrder.ok){
+      alert("order created");
+      const {createOrder: {ok, orderId} } = data;
+      history.push(`/orders/${orderId}`)
+    }
+  }
+  const [createOrderMutation, { loading: placingOrder }] = useMutation<
+    CreateOrderMutation,
+    CreateOrderMutationVariables
+  >(CREATE_ORDER,{onCompleted});
+  const triggerConfirmOrder = () => {
+    if (orderItems.length === 0) {
+      alert("Can't place empty order");
+      return;
+    }
+    // Should show the list of orders and price
+    const ok = window.confirm("You are about to place an order");
+    if (ok) {
+      createOrderMutation({
+        variables:{
+          input: {
+            restaurantId: +params.id,
+            items: orderItems
+          }
+        }
+      })
+    }
+  };
   return (
     <div>
       <Helmet>
@@ -149,9 +185,25 @@ export const Restaurant = () => {
         </div>
       </div>
       <div className="container pb-32 flex flex-col items-end mt-20">
-        <button onClick={triggerStartOrder} className="btn px-10">
-          {orderStarted ? "Ordering..." : "Start Order"}
-        </button>
+        {!orderStarted && (
+          <button onClick={triggerStartOrder} className="btn px-10">
+            Start Order
+          </button>
+        )}
+        {orderStarted && (
+          <div className="flex items-center">
+            <button onClick={triggerConfirmOrder} className="btn px-10 mr-3">
+              Confirm Order
+            </button>
+            <button
+              onClick={triggerCancelOrder}
+              className="btn px-10 bg-black hover:bg-black"
+            >
+              Cancel Order
+            </button>
+          </div>
+        )}
+
         <div className="w-full grid mt-16 md:grid-cols-3 gap-x-5 gap-y-10">
           {data?.restaurant.restaurant?.menu.map((dish, index) => (
             <Dish

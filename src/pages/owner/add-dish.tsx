@@ -58,7 +58,6 @@ export const AddDish = () => {
       name: rest[`${theId}-optionName`],
       extra: +rest[`${theId}-optionExtra`],
     }));
-    console.log(optionObjects);
     CreateDishMutation({
       variables: {
         input: {
