@@ -106,7 +106,6 @@ export const MyRestaurant = () => {
               domainPadding={50}
               containerComponent={<VictoryVoronoiContainer />}
             >
-              {" "}
               <VictoryLine
                 labels={({ datum }) => `$${datum.y}`}
                 labelComponent={
@@ -119,7 +118,7 @@ export const MyRestaurant = () => {
                 style={{
                   data: {
                     strokeWidth: 5,
-                    stroke: "4D7C0F",
+                    stroke: "#4D7C0F",
                   },
                 }}
                 interpolation="natural"
